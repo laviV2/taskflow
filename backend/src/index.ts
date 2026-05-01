@@ -36,8 +36,8 @@ app.use('/api/leaves', leaveRoutes);
 app.use('/api/messages', messagesRoutes);
 
 // SPA Routing: Serve index.html for any non-API routes
-app.get('*', (req, res) => {
-  if (req.path.startsWith('/api')) return;
+app.get('/{*splat}', (req: any, res: any) => {
+  if (req.path.startsWith('/api')) return res.status(404).json({ error: 'Not found' });
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
