@@ -1,0 +1,30 @@
+# TaskFlow Project Summary & Technical Documentation
+
+## 🚀 Overview
+TaskFlow is a professional full-stack Team Task Manager designed for enterprise-grade workflow orchestration. It features a mission-control aesthetic with role-based access control (Admin/Member), real-time task tracking, and comprehensive attendance management.
+
+## 🛠️ Technical Stack
+- **Frontend:** React 19 (Vite), Tailwind CSS 3, Zustand (State Management), Lucide Icons, Recharts (Analytics).
+- **Backend:** Node.js, Express 5, Prisma ORM.
+- **Database:** SQLite (SQL-based relational database).
+- **Authentication:** JWT-based secure auth with HttpOnly cookies.
+
+## 🏛️ Architecture & Relationships
+- **Users & Projects:** Many-to-Many (via assignments).
+- **Projects & Tasks:** One-to-Many.
+- **Users & Tasks:** One-to-Many (Assignee relationship).
+- **Attendance & Leaves:** Linked to Users for real-time presence tracking.
+
+## 🔑 Key Features Implemented
+1. **Dynamic Dashboard:** Role-specific analytics (Admins see team stats, Members see personal stats).
+2. **Kanban Board:** Drag-and-drop task status updates with detail modals.
+3. **Admin Controls:** Member assignment, project creation, and leave approval workflows.
+4. **Attendance System:** Live check-in/out logging with persistence.
+5. **Security:** Protected routes and role-based API authorization.
+
+## 🌐 Deployment Readiness
+- **Environment Variables:** Configured for `VITE_API_URL` (frontend) and `DATABASE_URL`/`JWT_SECRET` (backend).
+- **Build Scripts:** Optimized for Railway deployment with automated Prisma generation.
+- **Production Server:** Ready to serve via Express/Node.js.
+
+Built for selection in the Team Task Manager (Full-Stack) Assignment.

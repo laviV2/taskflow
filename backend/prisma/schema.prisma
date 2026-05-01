@@ -1,0 +1,138 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  email         String    @unique
+  password      String
+  role          String    @default("member")
+  avatar_url    String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  memberships   ProjectMember[]
+  ownedProjects Project[]       @relation("ProjectOwner")
+  assignedTasks Task[]          @relation("TaskAssignee")
+  createdTasks  Task[]          @relation("TaskCreator")
+  comments      Comment[]
+  activities    ActivityLog[]
+  attendances   Attendance[]
+  leaves        Leave[]
+  sentMessages     Message[]    @relation("SentMessages")
+  receivedMessages Message[]    @relation("ReceivedMessages")
+}
+
+model Message {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  content     String
+  sender_id   String   @db.ObjectId
+  receiver_id String?  @db.ObjectId
+  project_id  String?  @db.ObjectId
+  createdAt   DateTime @default(now())
+
+  sender      User     @relation("SentMessages", fields: [sender_id], references: [id])
+  receiver    User?    @relation("ReceivedMessages", fields: [receiver_id], references: [id])
+  project     Project? @relation(fields: [project_id], references: [id])
+}
+
+model Project {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  color       String   @default("#6366F1")
+  due_date    DateTime?
+  status      String   @default("active")
+  owner_id    String   @db.ObjectId
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  owner       User            @relation("ProjectOwner", fields: [owner_id], references: [id])
+  members     ProjectMember[]
+  tasks       Task[]
+  messages    Message[]
+}
+
+model ProjectMember {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  project_id String   @db.ObjectId
+  user_id    String   @db.ObjectId
+  role       String   @default("member")
+  joinedAt   DateTime @default(now())
+
+  project    Project  @relation(fields: [project_id], references: [id])
+  user       User     @relation(fields: [user_id], references: [id])
+
+  @@unique([project_id, user_id])
+}
+
+model Task {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  status      String   @default("To Do")
+  priority    String   @default("Medium")
+  due_date    DateTime?
+  project_id  String   @db.ObjectId
+  assignee_id String?  @db.ObjectId
+  creator_id  String   @db.ObjectId
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  project     Project  @relation(fields: [project_id], references: [id])
+  assignee    User?    @relation("TaskAssignee", fields: [assignee_id], references: [id])
+  creator     User     @relation("TaskCreator", fields: [creator_id], references: [id])
+  comments    Comment[]
+}
+
+model Comment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  content   String
+  task_id   String   @db.ObjectId
+  user_id   String   @db.ObjectId
+  createdAt DateTime @default(now())
+
+  task      Task     @relation(fields: [task_id], references: [id])
+  user      User     @relation(fields: [user_id], references: [id])
+}
+
+model Attendance {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  user_id   String    @db.ObjectId
+  date      DateTime  @default(now())
+  signIn    DateTime  @default(now())
+  signOut   DateTime?
+  status    String    @default("Present")
+
+  user      User      @relation(fields: [user_id], references: [id])
+}
+
+model Leave {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  user_id     String   @db.ObjectId
+  type        String   @default("Sick")
+  reason      String
+  startDate   DateTime
+  endDate     DateTime
+  status      String   @default("Pending")
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [user_id], references: [id])
+}
+
+model ActivityLog {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  action      String
+  entity_type String
+  entity_id   String
+  user_id     String   @db.ObjectId
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [user_id], references: [id])
+}
