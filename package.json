@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "cd frontend && npm install && npm run build && cd .. && node move-build.js",
-    "start": "cd backend && npm run start"
+    "postinstall": "cd backend && npm install && npx prisma generate && npx tsc",
+    "start": "cd backend && node dist/index.js"
   }
 }
