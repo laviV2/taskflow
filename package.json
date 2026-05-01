@@ -1,0 +1,8 @@
+{
+  "name": "taskflow-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "cd backend && npm install && npx prisma generate && npm run build && npm run start"
+  }
+}
